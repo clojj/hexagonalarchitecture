@@ -17,14 +17,14 @@ class SignUpController {
     private lateinit var signUpCustomerService: SignUpCustomerService
 
     @PostMapping("/customers")
-    fun signUpCustomer(@RequestBody requestBody: HttpSignUpCustomerRequestBody): Any =
+    fun signUpCustomer(@RequestBody requestBody: HttpSignUpCustomerRequestBody): ResponseEntity<HttpSignUpCustomerResponse> =
         requestBody.toServiceRequest()
             .let {
                 signUpCustomerService.invoke(it)
             }
             .fold(
                 {
-                    ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build()
+                    ResponseEntity.status(HttpStatus.BAD_REQUEST).build()
                 }, {
                     HttpSignUpCustomerResponse(it.id).let { response ->
                         ResponseEntity.status(HttpStatus.CREATED).body(response)
