@@ -21,7 +21,6 @@ class HexagonalArchitectureTest {
             .resideInAnyPackage(
                 "..domain..",
                 "java..",
-                "javax..",
                 "org.jetbrains..",
                 "kotlin..",
                 "arrow.."
@@ -40,10 +39,27 @@ class HexagonalArchitectureTest {
                 "..domain..",
                 "..application..",
                 "java..",
-                "javax..",
                 "org.jetbrains..",
                 "kotlin..",
                 "arrow.."
+            )
+            .check(importedClasses)
+    }
+
+    @Test
+    fun `outbound should not depend on inbound nor application services`() {
+        classes()
+            .that()
+            .resideInAPackage("..outbound..")
+            .should()
+            .onlyDependOnClassesThat()
+            .resideInAnyPackage(
+                "..outbound..",
+                "..domain..",
+                "java..",
+                "org.springframework..",
+                "org.jetbrains..",
+                "kotlin.."
             )
             .check(importedClasses)
     }
