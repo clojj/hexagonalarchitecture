@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
+import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toMono
 
 @RestController
 class SignUpController {
@@ -17,7 +19,7 @@ class SignUpController {
     private lateinit var signUpCustomerService: SignUpCustomerService
 
     @PostMapping("/customers")
-    fun signUpCustomer(@RequestBody requestBody: HttpSignUpCustomerRequestBody): Any =
+    suspend fun signUpCustomer(@RequestBody requestBody: HttpSignUpCustomerRequestBody): ResponseEntity<Mono<Any>> =
         requestBody.toServiceRequest()
             .let {
                 signUpCustomerService.invoke(it)
@@ -27,7 +29,7 @@ class SignUpController {
                     ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build()
                 }, {
                     HttpSignUpCustomerResponse(it.id).let { response ->
-                        ResponseEntity.status(HttpStatus.CREATED).body(response)
+                        ResponseEntity.status(HttpStatus.CREATED).body(response.toMono())
                     }
                 }
             )

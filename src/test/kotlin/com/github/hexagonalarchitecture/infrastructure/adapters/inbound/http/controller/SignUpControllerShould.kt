@@ -7,6 +7,7 @@ import com.github.hexagonalarchitecture.application.service.SignUpCustomerServic
 import com.github.hexagonalarchitecture.domain.model.DomainError
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.assertions.json.shouldEqualJson
+import io.kotest.matchers.shouldBe
 import io.mockk.every
 import java.util.UUID
 import org.junit.jupiter.api.Tag
@@ -16,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.expectBody
+import reactor.kotlin.core.publisher.toMono
 
 private val CUSTOMER_ID = UUID.randomUUID()
 
@@ -59,7 +61,7 @@ class SignUpControllerShould {
             .expectStatus()
             .isCreated
             .expectBody<String>()
-            .returnResult().responseBody!!.shouldEqualJson("""
+            .returnResult().responseBodyContent!!.decodeToString().shouldBe("""
                 {
                     "id": "$CUSTOMER_ID"
                 }
